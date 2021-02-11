@@ -1,0 +1,2 @@
+npx ts-standard --fix
+npm test

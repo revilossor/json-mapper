@@ -11,18 +11,11 @@
     "build/**/*.d.ts"
   ],
   "scripts": {
-    "postinstall": "husky install",
     "prebuild": "rm -rf build",
     "build": "tsc",
     "dev": "node scripts/monmap",
+    "postinstall": "husky install",
     "test": "jest"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && jest -o",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-push": "ts-standard --fix && npm test"
-    }
   },
   "lint-staged": {
     "*.{ts,js,tsx,jsx}": "ts-standard --fix",
