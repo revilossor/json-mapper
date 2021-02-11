@@ -1,5 +1,5 @@
 {
-  "name": "json-mapper",
+  "name": "@revilossor/json-mapper",
   "version": "1.0.0",
   "description": "A declarative way to transform JSON",
   "license": "ISC",
@@ -11,6 +11,7 @@
     "build/**/*.d.ts"
   ],
   "scripts": {
+    "postinstall": "husky install",
     "prebuild": "rm -rf build",
     "build": "tsc",
     "dev": "node scripts/monmap",
