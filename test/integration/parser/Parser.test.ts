@@ -1,14 +1,20 @@
 import { Parser } from '../../../src/parser'
 
-// empty stirng - no rules / desc
+let parser: Parser
+
+beforeEach(() => {
+  parser = new Parser()
+})
+
+describe('When I parse an empty mapping', () => {
+  it('Then I get an empty object', () => {
+    const mapping = ''
+
+    expect(parser.parse(mapping)).toEqual({})
+  })
+})
 
 describe('When I parse a mapping that just has a details line', () => {
-  let parser: Parser
-
-  beforeEach(() => {
-    parser = new Parser()
-  })
-
   describe('And it is complete', () => {
     it('Then I get name, version and description in the result', () => {
       const mapping = 'test-mapping:0.0.0:a test mapping for integration tests'
