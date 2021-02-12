@@ -1,5 +1,7 @@
 import { Parser } from '../../../src/parser'
 
+// empty stirng - no rules / desc
+
 describe('When I parse a mapping that just has a details line', () => {
   let parser: Parser
 
@@ -8,7 +10,7 @@ describe('When I parse a mapping that just has a details line', () => {
   })
 
   describe('And it is complete', () => {
-    it('Then I only get name, version and description in the result', () => {
+    it('Then I get name, version and description in the result', () => {
       const mapping = 'test-mapping:0.0.0:a test mapping for integration tests'
 
       expect(parser.parse(mapping)).toEqual({
@@ -19,7 +21,7 @@ describe('When I parse a mapping that just has a details line', () => {
     })
   })
   describe('And it has no description', () => {
-    it('Then I only get name and version in the result', () => {
+    it('Then I get name and version in the result', () => {
       const mapping = 'test-mapping:0.0.0'
 
       expect(parser.parse(mapping)).toEqual({
@@ -29,7 +31,7 @@ describe('When I parse a mapping that just has a details line', () => {
     })
   })
   describe('And it has an empty description', () => {
-    it('Then I get name and version in the result, and description is an empty string', () => {
+    it('Then I get name and version in the result and description is an empty string', () => {
       const mapping = 'test-mapping:0.0.0:'
 
       expect(parser.parse(mapping)).toEqual({
@@ -39,8 +41,8 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
-  describe('And it has no version', () => {
-    it('Then I only get nam in the result', () => {
+  describe('And it has no version or description', () => {
+    it('Then I only get name in the result', () => {
       const mapping = 'test-mapping'
 
       expect(parser.parse(mapping)).toEqual({
@@ -48,8 +50,8 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
-  describe('And it has an empty version', () => {
-    it('Then I get name in the result, and version is an empty string', () => {
+  describe('And it has an empty version and no description', () => {
+    it('Then I get name in the result and version is an empty string', () => {
       const mapping = 'test-mapping:'
 
       expect(parser.parse(mapping)).toEqual({
@@ -58,7 +60,7 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
-  describe('And it has a name, a description and no version', () => {
+  describe('And it has a name and a description, but no version', () => {
     it('Then I get name and description in the result, and no version', () => {
       const mapping = 'test-mapping::description'
 
@@ -68,4 +70,6 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
+
+  // with invalid details - :blah:blah
 })
