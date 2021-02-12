@@ -1,13 +1,13 @@
 export default `
-Mapping = details:MappingDetails* {
+Mapping "a mapping" = details:MappingDetails* {
   return {
     ...details.pop()
   }
 }
 
-MappingDetails = NVDMappingDetails
+MappingDetails "mapping details" = NVDMappingDetails
 
-NVDMappingDetails = name:[^:]+ ':' version:[^:]+ ':' description:[^:]* {
+NVDMappingDetails "full mapping details" = name:[^:]+ ':' version:[^:]+ ':' description:[^:]* {
   return {
     name: name.join(''),
     version: version.join(''),
@@ -15,23 +15,36 @@ NVDMappingDetails = name:[^:]+ ':' version:[^:]+ ':' description:[^:]* {
   }
 } / NDMappingDetails
 
-NDMappingDetails = name:[^:]+ '::' description:[^:]* {
+NDMappingDetails "mapping details with no version" = name:[^:]+ '::' description:[^:]* {
   return {
     name: name.join(''),
     description: description.join('')
   }
 } / NVMappingDetails
 
-NVMappingDetails = name:[^:]+ ':' version:[^:]* {
+NVMappingDetails "mapping details with no description" = name:[^:]+ ':' version:[^:]* {
   return {
     name: name.join(''),
     version: version.join('')
   }
+} / VDMappingDetails
+
+VDMappingDetails "mapping details with no name" = ':' version:[^:]* ':' description:[^:]* {
+  return {
+    version: version.join(''),
+    description: description.join('')
+  }
 } / NMappingDetails
 
-NMappingDetails = name:[^:]+ {
+NMappingDetails "mapping details with just a name" = name:[^:]+ {
   return {
     name: name.join('')
+  }
+} / VMappingDetails
+
+VMappingDetails "mapping details with just a version" = ':' version:[^:]+ {
+  return {
+    version: version.join('')
   }
 }
 `

@@ -76,6 +76,27 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
+  describe('And it has no name or description', () => {
+    it('Then I only get version in the result', () => {
+      const mapping = ':version'
 
-  // with invalid details - :blah:blah
+      expect(parser.parse(mapping)).toEqual({
+        version: 'version'
+      })
+    })
+  })
+  describe('And it has no name and an empty description', () => {
+    it('Then I get version in the result and description is an empty string', () => {
+      const mapping = ':version:'
+
+      expect(parser.parse(mapping)).toEqual({
+        version: 'version',
+        description: ''
+      })
+    })
+  })
+})
+
+describe('When I parse a mapping that is invalid', () => {
+  // TOFO
 })
