@@ -9,6 +9,8 @@ Maps one json structure to another, according to a declared specification
 - rules are delimeted with newlines
 - the first line of a mapping is the optional **<name>:<version>:<description>**
 
+jsonmapper(mapping, input): output
+
 ## example rules
 
 ```text

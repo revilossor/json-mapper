@@ -1,3 +1,5 @@
+export type Mapping = string
+
 export interface ASTRule {
   required: boolean
 }

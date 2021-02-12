@@ -9,16 +9,12 @@ jest.mock('pegjs', () => ({
   generate: jest.fn()
 }))
 
-interface Input {
-  one: string
-}
-
 beforeAll(() => {
   generate.mockImplementation(() => ({ parse }))
 })
 
 describe('When I initialise a parser', () => {
-  let parser: Parser<Input>
+  let parser: Parser
 
   beforeEach(() => {
     parser = new Parser()
@@ -28,17 +24,17 @@ describe('When I initialise a parser', () => {
     expect(generate).toHaveBeenCalledWith(grammar)
   })
 
-  describe('When I parse something', () => {
-    it('Then the stringified input is parsed and the result returned', () => {
+  describe('When I parse a mapping', () => {
+    it('Then it is parsed by the generated parser and the result is returned', () => {
       const ast: AST = {
         rules: [
           { required: false }
         ]
       }
       parse.mockImplementationOnce(() => ast)
-      const input = { one: '1' }
-      const result = parser.parse(input)
-      expect(parse).toHaveBeenCalledWith(JSON.stringify(input))
+      const mapping = 'some mapping'
+      const result = parser.parse(mapping)
+      expect(parse).toHaveBeenCalledWith(mapping)
       expect(result).toEqual(ast)
     })
   })
@@ -49,7 +45,7 @@ describe('When I initialise a parser', () => {
       parse.mockImplementationOnce(() => {
         throw error
       })
-      expect(() => parser.parse({ one: '1' })).toThrow(`ParseError: ${error.message}`)
+      expect(() => parser.parse('some mapping')).toThrow(`ParseError: ${error.message}`)
     })
   })
 })
