@@ -1,14 +1,15 @@
 import grammar from './grammar'
 import { generate, Parser as PEGParser } from 'pegjs'
+import { AST } from '../types'
 
-export class Parser<A, B> {
+export class Parser<A> {
   private readonly peg: PEGParser
 
   public constructor () {
     this.peg = generate(grammar)
   }
 
-  public parse (input: A): B {
+  public parse (input: A): AST {
     try {
       return this.peg.parse(
         JSON.stringify(input)
