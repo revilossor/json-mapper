@@ -8,5 +8,5 @@ export interface AST {
   name?: string
   version?: string
   description?: string
-  rules: ASTRule[]
+  tree: ASTRule[]
 }

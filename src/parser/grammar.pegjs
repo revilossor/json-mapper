@@ -1,7 +1,7 @@
-Mapping "mapping details and rules" = details:MappingDetails* EOL rules:Rule* {
+Mapping "mapping details and tree" = _ details:MappingDetails* _ tree:MappingTree _ {
   return {
     ...details.pop(),
-    ...(rules.length > 0 ? { rules } : {})
+    tree
   }
 }
 
@@ -28,10 +28,28 @@ NMappingDetails "mapping details with just a name" = name:Char+ {
   }
 }
 
-Rule "a mapping rule" = text:Char+ EOL {
-  return text.join('')
+MappingTree "a mapping tree" = '{' _ rules:MappingRule* _ '}' {
+  return rules
 }
 
-Char = [^:\n\r]
-Newline = '\n' / '\r' '\n'?
-EOL = Newline / !.
+MappingRule "a mapping rule" = _ rule:QueryMappingRule _ {
+  return rule
+}
+
+QueryMappingRule "a mapping rule with a key and a query" = key:Char+ ':' query:Char+ EOL {
+  return {
+    key: key.join('').trim(),
+    query: query.join('').trim()
+  }
+} / KeyMappingRule
+
+KeyMappingRule "a mapping rule with a key" = key:Char+ EOL {
+  return {
+    key: key.join('').trim()
+  }
+}
+
+EOL = [\r\n]
+Char = [^:{}\r\n]
+_  = [ \t\r\n]*
+__ = [ \t\r\n]+
