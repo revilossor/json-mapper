@@ -2,6 +2,10 @@
   "name": "@revilossor/json-mapper",
   "version": "1.0.0",
   "description": "A declarative way to transform JSON",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/revilossor/json-mapper.git"
+  },
   "license": "ISC",
   "author": "Oliver Ross <oliver.ross@hotmail.com>",
   "main": "build/index",
