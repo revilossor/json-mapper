@@ -19,14 +19,24 @@ MappingTree "a mapping tree" = '{' _ head:MappingRule* tail:(EOL MappingRule)* _
   return [ ...head, ...tail ]
 }
 
-MappingRule "a mapping rule" = _ rule:QueryMappingRule _ tree:MappingTree? {
+MappingRule "a mapping rule" = _ rule:LiteralMappingRule _ tree:MappingTree? {
+  if(!!rule.literal && tree) {
+	error('LiteralMappingRules cannot have a MappingTree')
+  }
   return {
     ...rule,
 	...(tree ? { tree }: {})
   }
 }
 
-QueryMappingRule "a mapping rule with a key and a query" = key:Key '/' query:Char+ {
+LiteralMappingRule "a mapping rule with a literal" = key:Key _ '/' _ '"' _ literal:Char+ _ '"' {
+  return {
+    ...key,
+    literal: literal.join('').trim()
+  }
+} / QueryMappingRule
+
+QueryMappingRule "a mapping rule with a key and a query" = key:Key _ '/' _ query:QueryChar+ {
   return {
     ...key,
     query: query.join('').trim()
@@ -39,7 +49,7 @@ KeyMappingRule "a mapping rule with a key" = key:Key {
   }
 }
 
-Key "a property key" = chars:Char+ _ required:'!'? _ {
+Key "a property key" = chars:Char+ _ required:'!'? {
   return {
     key: chars.join('').trim(),
   	required: !!required
@@ -47,6 +57,7 @@ Key "a property key" = chars:Char+ _ required:'!'? _ {
 }
 
 EOL = [\r\n]
-Char = [^!/{}\r\n]
+Char = [^"!/{}\r\n]
+QueryChar = [^!/{}\r\n]
 _  = [ \t\r\n]*
 __ = [ \t\r\n]+

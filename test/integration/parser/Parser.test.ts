@@ -110,6 +110,19 @@ describe('When I parse a mapping with a rule', () => {
       })
     })
   })
+  describe('And the rule maps a literal', () => {
+    it('Then the returned tree contains the correct key and literal', () => {
+      expect(parser.parse(`{
+        keyInOutput/"literal value"
+      }`)).toEqual({
+        tree: [{
+          key: 'keyInOutput',
+          literal: 'literal value',
+          required: false
+        }]
+      })
+    })
+  })
   describe('And there are multiple rules', () => {
     it('Then the returned tree contains an element for each rule', () => {
       const expected = {
@@ -226,9 +239,14 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
     expect(() => parser.parse('{{}}')).toThrow()
     expect(() => parser.parse('{noquery{{}}}')).toThrow()
   })
+  it('When there is a literal mapping with a mapping', () => {
+    expect(() => parser.parse('{key/"literal"{}}')).toThrow()
+    expect(() => parser.parse('{key{nested/"literal"{}}')).toThrow()
+  })
 })
 
-// TODO root flag on mapping rules ---> ~<rule>
+// TODO test literals -> key/"literal"
 
 // TODO hardcode values
+// TODO root flag on mapping rules ---> ~<rule>
 // TODO lists needs thought
