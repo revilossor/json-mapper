@@ -108,7 +108,26 @@ describe('When I parse a mapping with a rule', () => {
       })
     })
   })
-  // TODO multiple rules
+  describe('And there are multiple rules', () => {
+    it('Then the returned tree contains an element for each rule', () => {
+      const expected = {
+        tree: [
+          {
+            key: 'keyname'
+          },
+          {
+            key: 'anotherKeyname',
+            query: 'somequery'
+          },
+          {
+            key: 'third'
+          }
+        ]
+      }
+      expect(parser.parse('{keyname\nanotherKeyname / somequery\nthird}')).toEqual(expected)
+      expect(parser.parse('\n\n{\n\n\t\tkeyname\n\t\n\tanotherKeyname / somequery\n\t\nthird\t}\n')).toEqual(expected)
+    })
+  })
 })
 
 describe('When I parse a mapping that is invalid, I get an error', () => {
@@ -123,5 +142,8 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
     expect(() => parser.parse('')).toThrow()
     expect(() => parser.parse('name:version:description')).toThrow()
   })
-  // TODO mapping rule invalid
+  it('When a mapping rule is weird', () => {
+    expect(() => parser.parse('{/}')).toThrow()
+    expect(() => parser.parse('{noquery/}')).toThrow()
+  })
 })
