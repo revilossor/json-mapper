@@ -71,7 +71,8 @@ describe('When I parse a mapping with a rule', () => {
     it('Then the returned tree contains an element with the correct property key', () => {
       const expected = {
         tree: [{
-          key: 'keyname'
+          key: 'keyname',
+          required: false
         }]
       }
       expect(parser.parse('{keyname}')).toEqual(expected)
@@ -102,7 +103,8 @@ describe('When I parse a mapping with a rule', () => {
         }`)).toEqual({
           tree: [{
             key: 'mappedKeyName',
-            query
+            query,
+            required: false
           }]
         })
       })
@@ -113,14 +115,17 @@ describe('When I parse a mapping with a rule', () => {
       const expected = {
         tree: [
           {
-            key: 'keyname'
+            key: 'keyname',
+            required: false
           },
           {
             key: 'anotherKeyname',
-            query: 'somequery'
+            query: 'somequery',
+            required: false
           },
           {
-            key: 'third'
+            key: 'third',
+            required: false
           }
         ]
       }
@@ -145,20 +150,50 @@ describe('When I parse a mapping with nested rules', () => {
     }`
     expect(parser.parse(mapping)).toEqual({
       tree: [
-        { key: 'type' },
-        { key: 'mime-type' },
+        { key: 'type', required: false },
+        { key: 'mime-type', required: false },
         {
           key: 'renditions',
+          required: false,
           tree: [
-            { key: 'name' },
-            { key: 'age' },
+            { key: 'name', required: false },
+            { key: 'age', required: false },
             {
               key: 'stuff',
+              required: false,
               tree: [{
                 key: 'key',
+                required: false,
                 query: 'query'
               }]
             }
+          ]
+        }
+      ]
+    })
+  })
+})
+
+describe('When I parse a mapping with required keys', () => {
+  it('Then the returned tree contains required elements', () => {
+    const mapping = `{
+      type
+      mime-type!
+      renditions! {
+        name!/query
+        age ! /query
+      }
+    }`
+    expect(parser.parse(mapping)).toEqual({
+      tree: [
+        { key: 'type', required: false },
+        { key: 'mime-type', required: true },
+        {
+          key: 'renditions',
+          required: true,
+          tree: [
+            { key: 'name', query: 'query', required: true },
+            { key: 'age', query: 'query', required: true }
           ]
         }
       ]
@@ -192,3 +227,8 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
     expect(() => parser.parse('{noquery{{}}}')).toThrow()
   })
 })
+
+// TODO root flag on mapping rules ---> ~<rule>
+
+// TODO hardcode values
+// TODO lists needs thought

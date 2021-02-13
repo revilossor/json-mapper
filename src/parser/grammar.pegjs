@@ -22,24 +22,31 @@ MappingTree "a mapping tree" = '{' _ head:MappingRule* tail:(EOL MappingRule)* _
 MappingRule "a mapping rule" = _ rule:QueryMappingRule _ tree:MappingTree? {
   return {
     ...rule,
-	...(tree ? { tree }: {}),
+	...(tree ? { tree }: {})
   }
 }
 
-QueryMappingRule "a mapping rule with a key and a query" = key:Char+ '/' query:Char+ {
+QueryMappingRule "a mapping rule with a key and a query" = key:Key '/' query:Char+ {
   return {
-    key: key.join('').trim(),
+    ...key,
     query: query.join('').trim()
   }
 } / KeyMappingRule
 
-KeyMappingRule "a mapping rule with a key" = key:Char+ {
+KeyMappingRule "a mapping rule with a key" = key:Key {
   return {
-    key: key.join('').trim()
+    ...key
+  }
+}
+
+Key "a property key" = chars:Char+ _ required:'!'? _ {
+  return {
+    key: chars.join('').trim(),
+  	required: !!required
   }
 }
 
 EOL = [\r\n]
-Char = [^/{}\r\n]
+Char = [^!/{}\r\n]
 _  = [ \t\r\n]*
 __ = [ \t\r\n]+
