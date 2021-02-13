@@ -19,8 +19,11 @@ MappingTree "a mapping tree" = '{' _ head:MappingRule* tail:(EOL MappingRule)* _
   return [ ...head, ...tail ]
 }
 
-MappingRule "a mapping rule" = _ rule:QueryMappingRule _ {
-  return rule
+MappingRule "a mapping rule" = _ rule:QueryMappingRule _ tree:MappingTree? {
+  return {
+    ...rule,
+	...(tree ? { tree }: {}),
+  }
 }
 
 QueryMappingRule "a mapping rule with a key and a query" = key:Char+ '/' query:Char+ {

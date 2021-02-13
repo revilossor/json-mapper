@@ -130,6 +130,42 @@ describe('When I parse a mapping with a rule', () => {
   })
 })
 
+describe('When I parse a mapping with nested rules', () => {
+  it('Then the returned tree contains correctly nested elements', () => {
+    const mapping = `{
+      type
+      mime-type
+      renditions {
+        name
+        age
+        stuff {
+          key/query
+        }
+      }
+    }`
+    expect(parser.parse(mapping)).toEqual({
+      tree: [
+        { key: 'type' },
+        { key: 'mime-type' },
+        {
+          key: 'renditions',
+          tree: [
+            { key: 'name' },
+            { key: 'age' },
+            {
+              key: 'stuff',
+              tree: [{
+                key: 'key',
+                query: 'query'
+              }]
+            }
+          ]
+        }
+      ]
+    })
+  })
+})
+
 describe('When I parse a mapping that is invalid, I get an error', () => {
   it('When the description line is weird', () => {
     expect(() => parser.parse('test-mapping::description')).toThrow()
@@ -145,5 +181,14 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
   it('When a mapping rule is weird', () => {
     expect(() => parser.parse('{/}')).toThrow()
     expect(() => parser.parse('{noquery/}')).toThrow()
+    expect(() => parser.parse('{nested{noquery/}}')).toThrow()
+  })
+  it('When there are multiple mappings', () => {
+    expect(() => parser.parse('{}{}')).toThrow()
+    expect(() => parser.parse('{noquery{}{}}')).toThrow()
+  })
+  it('When there is a mapping without a key (other than the main one)', () => {
+    expect(() => parser.parse('{{}}')).toThrow()
+    expect(() => parser.parse('{noquery{{}}}')).toThrow()
   })
 })
