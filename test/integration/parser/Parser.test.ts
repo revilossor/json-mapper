@@ -14,6 +14,7 @@ describe('When I parse an empty mapping', () => {
   })
 })
 
+// TODO trims name, ver, desc
 describe('When I parse a mapping that just has a details line', () => {
   describe('And it is complete', () => {
     it('Then I get name, version and description in the result', () => {
@@ -66,37 +67,19 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
-  describe('And it has a name and a description, but no version', () => {
-    it('Then I get name and description in the result, and no version', () => {
-      const mapping = 'test-mapping::description'
-
-      expect(parser.parse(mapping)).toEqual({
-        name: 'test-mapping',
-        description: 'description'
-      })
-    })
-  })
-  describe('And it has no name or description', () => {
-    it('Then I only get version in the result', () => {
-      const mapping = ':version'
-
-      expect(parser.parse(mapping)).toEqual({
-        version: 'version'
-      })
-    })
-  })
-  describe('And it has no name and an empty description', () => {
-    it('Then I get version in the result and description is an empty string', () => {
-      const mapping = ':version:'
-
-      expect(parser.parse(mapping)).toEqual({
-        version: 'version',
-        description: ''
-      })
-    })
-  })
 })
 
-describe('When I parse a mapping that is invalid', () => {
-  // TOFO
+describe('When I parse a mapping that is invalid, I get an informative error', () => {
+  it('When the description line is weird', () => {
+    expect(() => parser.parse('test-mapping::description'))
+      .toThrowError('ParseError: Expected mapping details and rules but "t" found.')
+    expect(() => parser.parse(':version'))
+      .toThrowError('ParseError: Expected mapping details and rules but ":" found.')
+    expect(() => parser.parse(':version:'))
+      .toThrowError('ParseError: Expected mapping details and rules but ":" found.')
+    expect(() => parser.parse('::'))
+      .toThrowError('ParseError: Expected mapping details and rules but ":" found.')
+    expect(() => parser.parse(':'))
+      .toThrowError('ParseError: Expected mapping details and rules but ":" found.')
+  })
 })

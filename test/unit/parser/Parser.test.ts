@@ -1,15 +1,22 @@
-import { Parser, grammar } from '../../../src/parser'
+import { Parser } from '../../../src/parser'
 import { generate as generateActual } from 'pegjs'
+import { readFileSync as readFileSyncActual } from 'fs'
 import { AST } from '../../../src/types'
 
 const generate = generateActual as jest.Mock
+const readFileSync = readFileSyncActual as jest.Mock
 const parse = jest.fn()
 
 jest.mock('pegjs', () => ({
   generate: jest.fn()
 }))
 
+jest.mock('fs')
+
+const source = 'source code'
+
 beforeAll(() => {
+  readFileSync.mockReturnValue(source)
   generate.mockImplementation(() => ({ parse }))
 })
 
@@ -21,7 +28,10 @@ describe('When I initialise a parser', () => {
   })
 
   it('Then the grammar is used to generate a parser', () => {
-    expect(generate).toHaveBeenCalledWith(grammar)
+    expect(readFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('/parser/grammar.pegjs')
+    )
+    expect(generate).toHaveBeenCalledWith(source)
   })
 
   describe('When I parse a mapping', () => {
