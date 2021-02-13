@@ -15,15 +15,13 @@ jest.mock('fs')
 
 const source = 'source code'
 
-beforeAll(() => {
-  readFileSync.mockReturnValue(source)
-  generate.mockImplementation(() => ({ parse }))
-})
+readFileSync.mockReturnValue(source)
+generate.mockImplementation(() => ({ parse }))
 
 describe('When I initialise a parser', () => {
   let parser: Parser
 
-  beforeEach(() => {
+  beforeAll(() => {
     parser = new Parser()
   })
 
@@ -37,7 +35,7 @@ describe('When I initialise a parser', () => {
   describe('When I parse a mapping', () => {
     it('Then it is parsed by the generated parser and the result is returned', () => {
       const ast: AST = {
-        rules: [
+        tree: [
           { required: false }
         ]
       }

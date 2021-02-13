@@ -2,7 +2,7 @@ import { Parser } from '../../../src/parser'
 
 let parser: Parser
 
-beforeEach(() => {
+beforeAll(() => {
   parser = new Parser()
 })
 

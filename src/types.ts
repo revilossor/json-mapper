@@ -1,7 +1,10 @@
 export type Mapping = string
 
 export interface ASTRule {
-  required: boolean
+  key: string
+  required?: boolean
+  query?: string
+  // TODO tree
 }
 
 export interface AST {
