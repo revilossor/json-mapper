@@ -67,6 +67,17 @@ describe('When I parse a mapping that just has a details line', () => {
       })
     })
   })
+  describe('And it is has whitespace (but not newlines) around delimeters', () => {
+    it('Then the whitespace is trimmed', () => {
+      const mapping = 'test-mapping : 0.0.0 : a test mapping for integration tests'
+
+      expect(parser.parse(mapping)).toEqual({
+        name: 'test-mapping',
+        version: '0.0.0',
+        description: 'a test mapping for integration tests'
+      })
+    })
+  })
 })
 
 describe('When I parse a mapping that is invalid, I get an informative error', () => {
