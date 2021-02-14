@@ -245,8 +245,12 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
   })
 })
 
-// TODO test literals -> key/"literal"
-
-// TODO hardcode values
 // TODO root flag on mapping rules ---> ~<rule>
-// TODO lists needs thought
+
+// - if query result is a scalar and has mapping, ERROR
+// - if query result is a scalar and NO mapping, assign
+// - if query result is an object and has mapping, scoped apply
+// - if query result is an object and NO mapping, assign
+// - if query result is an array and has mapping, and map leaf is object scoped apply
+// - if query result is an array and has mapping, and map leaf is scalar ERROR
+// - if query result is an array and NO mapping, assign
