@@ -30,6 +30,8 @@ name / version / description
 
 Maybe need a way to say a rule applies to global not the scoped thing, for when scoped thing is result of weird query ( eg, you would only be able to further query on vector result )
 
+use @ syntax from jsonpath?
+
 Might need to dfs to mirror nested array strucure - but only if leaves are objects.
 
 - if query result is a scalar and has mapping, ERROR - strict mode? options?

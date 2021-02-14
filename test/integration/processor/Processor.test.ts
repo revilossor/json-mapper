@@ -122,6 +122,43 @@ describe('Given a Processor for a syntax tree', () => {
       })
     })
   })
+  describe('When a mapping rule queries for a value', () => {
+    describe('And the query returns a single result', () => {
+      interface Output {
+        result?: string
+      }
+      const tree: ASTRule[] = [
+        { key: 'result', required: false, query: '$.one' }
+      ]
+
+      it('Then the result contains the expected properties', () => {
+        const processor = new Processor<Input, Output>(tree)
+        const input = {
+          one: '1', two: '2', three: '3', additional: 'stuff'
+        }
+        expect(processor.process(input)).toEqual({
+          result: input.one
+        })
+      })
+    }) // TODO unit test query rule calls jp side effect
+    describe('And the query has bad syntax', () => {
+      interface Output {
+        result?: string
+      }
+      const tree: ASTRule[] = [
+        { key: 'result', required: false, query: 'syntax error' }
+      ]
+
+      it('Then the process throws an error', () => {
+        const processor = new Processor<Input, Output>(tree)
+        const input = {
+          one: '1', two: '2', three: '3', additional: 'stuff'
+        }
+        expect(() => processor.process(input)).toThrowError('syntax error')
+      })
+    })
+    // TODO no results, multiple results, what if the type is an array? required
+  })
   describe('When a mapping rule has a literal and a tree', () => {
     interface Output {
       one?: string
@@ -222,7 +259,6 @@ describe('Given a Processor for a syntax tree', () => {
     })
   })
 
-  // TODO query
   // TODO mapping on query
   // TODO root - parser too ( everything root cept in mapping on quuery )
 })

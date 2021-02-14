@@ -1,4 +1,5 @@
 import { ASTRule } from '../types'
+import jp from 'jsonpath'
 
 interface json { [index: string]: any }
 
@@ -18,13 +19,15 @@ export class Processor<I extends json, O extends json> {
     key,
     tree,
     literal,
-    required
-    // query,
+    required,
+    query
   }: ASTRule, strict: boolean): json {
     let value
 
     if (literal !== undefined) {
       value = literal
+    } else if (query !== undefined) {
+      value = jp.value(input, query)
     } else if (tree !== undefined) {
       value = this.traverse(input, tree, false)
     } else {
