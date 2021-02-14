@@ -1,5 +1,5 @@
 export default function depthFirstSearch (
-  callback: (element: any, path: number[], source: any[]) => void,
+  callback: (element: any, path?: number[], source?: any[]) => void,
   source: any[],
   current = source,
   path: number[] = []
