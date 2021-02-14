@@ -110,14 +110,27 @@ describe('When I parse a mapping with a rule', () => {
       })
     })
   })
-  describe('And the rule maps a literal', () => {
+  describe('And the rule maps a literal string', () => {
     it('Then the returned tree contains the correct key and literal', () => {
       expect(parser.parse(`{
-        keyInOutput/"literal value"
+        keyInOutput/"literal string value"
       }`)).toEqual({
         tree: [{
           key: 'keyInOutput',
-          literal: 'literal value',
+          literal: 'literal string value',
+          required: false
+        }]
+      })
+    })
+  })
+  describe('And the rule maps a literal number', () => {
+    it('Then the returned tree contains the correct key and literal', () => {
+      expect(parser.parse(`{
+        keyInOutput/"3.14"
+      }`)).toEqual({
+        tree: [{
+          key: 'keyInOutput',
+          literal: 3.14,
           required: false
         }]
       })

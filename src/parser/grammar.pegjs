@@ -30,9 +30,11 @@ MappingRule "a mapping rule" = _ rule:LiteralMappingRule _ tree:MappingTree? {
 }
 
 LiteralMappingRule "a mapping rule with a literal" = key:Key _ '/' _ '"' _ literal:Char+ _ '"' {
+  const joined = literal.join('').trim()
+  const parsed = parseFloat(joined, 10)
   return {
     ...key,
-    literal: literal.join('').trim()
+    literal: Number.isNaN(parsed) ? joined : parsed
   }
 } / QueryMappingRule
 
