@@ -36,7 +36,10 @@ describe('When I initialise a parser', () => {
     it('Then it is parsed by the generated parser and the result is returned', () => {
       const ast: AST = {
         tree: [
-          { required: false }
+          {
+            key: 'somekey',
+            required: false
+          }
         ]
       }
       parse.mockImplementationOnce(() => ast)
