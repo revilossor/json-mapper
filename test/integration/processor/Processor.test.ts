@@ -122,8 +122,107 @@ describe('Given a Processor for a syntax tree', () => {
       })
     })
   })
-  // TODO test literal overrides tree
-  // TODO required
+  describe('When a mapping rule has a literal and a tree', () => {
+    interface Output {
+      one?: string
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'one',
+        required: false,
+        literal: 'override',
+        tree: [
+          {
+            key: 'nested',
+            required: false,
+            tree: [{
+              key: 'value',
+              required: false,
+              literal: 'blah'
+            }]
+          }
+        ]
+      }
+    ]
+
+    it('Then the literal overrides the tree', () => {
+      const processor = new Processor<Input, Output>(tree)
+      const input = { one: '1' }
+      expect(processor.process(input)).toEqual({
+        one: 'override'
+      })
+    })
+  })
+  describe('When a copy rule is required', () => {
+    interface Output {
+      one: string
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'one',
+        required: true
+      }
+    ]
+
+    it('Then an error is thrown if the rule does not resolve a value', () => {
+      const error = new Error('expected "one" to resolve to a value')
+      const processor = new Processor<Input, Output>(tree)
+      expect(() => processor.process({ one: undefined })).toThrowError(error)
+      expect(() => processor.process({ two: '2', three: '3' })).toThrowError(error)
+    })
+  })
+  describe('When a copy rule is not required', () => {
+    interface Output {
+      one?: string
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'one',
+        required: false
+      }
+    ]
+
+    it('Then the key is not assigned in the output if the property is not present in the input', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ one: undefined })).toEqual({})
+    })
+  })
+  describe('When a nesting rule is required', () => {
+    interface Output {
+      nested?: {
+        one: string
+        two?: string
+      }
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'nested',
+        required: false,
+        tree: [{
+          key: 'one',
+          required: true
+        }, {
+          key: 'two',
+          required: false
+        }]
+      }
+    ]
+
+    it('When all required properties are present, the resolved subtree is assigned', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ one: 'one' })).toEqual({
+        nested: {
+          one: 'one'
+        }
+      })
+    })
+
+    it('If a required property is missing, nothing is assigned but no error is thrown', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ two: 'two' })).toEqual({})
+    })
+  })
+
   // TODO query
   // TODO mapping on query
   // TODO root - parser too ( everything root cept in mapping on quuery )

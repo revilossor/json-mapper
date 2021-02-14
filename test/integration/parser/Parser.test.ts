@@ -195,6 +195,7 @@ describe('When I parse a mapping with required keys', () => {
       renditions! {
         name!/query
         age ! /query
+        something!/"literal"
       }
     }`
     expect(parser.parse(mapping)).toEqual({
@@ -206,7 +207,8 @@ describe('When I parse a mapping with required keys', () => {
           required: true,
           tree: [
             { key: 'name', query: 'query', required: true },
-            { key: 'age', query: 'query', required: true }
+            { key: 'age', query: 'query', required: true },
+            { key: 'something', literal: 'literal', required: true }
           ]
         }
       ]
