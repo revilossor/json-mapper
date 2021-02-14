@@ -2,7 +2,7 @@ export type Mapping = string
 
 export interface ASTRule {
   key: string
-  required?: boolean
+  required: boolean
   query?: string
   tree?: ASTRule[]
   literal?: string

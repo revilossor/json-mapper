@@ -1,4 +1,4 @@
-import depthFirstSearch from '../../../src/lib/depthFirstSearch'
+import { depthFirstSearch } from '../../../src/lib'
 
 describe('When I search a flat array', () => {
   const array = [
