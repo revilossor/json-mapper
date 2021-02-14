@@ -6,10 +6,12 @@ export class Processor<I extends json, O extends json> {
   // TODO validate the tree for required fields in output O...?
   public constructor (private readonly root: ASTRule[]) {}
 
-  private hasAllRequired (value: json, tree: ASTRule[]): boolean {
-    return tree.every(({ key, required }) => {
-      return !required || (required && value[key] !== undefined)
-    })
+  private hasAllRequired (value: json, tree?: ASTRule[]): boolean {
+    return tree === undefined
+      ? value !== undefined
+      : tree.every(({ key, required }) => {
+        return !required || (required && value[key] !== undefined)
+      })
   }
 
   private apply (input: json, {
@@ -25,19 +27,16 @@ export class Processor<I extends json, O extends json> {
       value = literal
     } else if (tree !== undefined) {
       value = this.traverse(input, tree, false)
-      if (!this.hasAllRequired(value, tree)) { // TODO extract these to handlers or something
-        if (required) {
-          throw new Error(`expected "${key}" to map to an object with all required properties`)
-        } else {
-          return {}
-        }
-      }
     } else {
       value = input[key]
     }
 
-    if (strict && required && value === undefined) {
-      throw new Error(`expected "${key}" to resolve to a value`)
+    if (!this.hasAllRequired(value, tree)) {
+      if (strict && required) {
+        throw new Error(`expected "${key}" to resolve all required values`)
+      } else {
+        return {}
+      }
     }
 
     return {
