@@ -28,7 +28,7 @@ name / version / description
 }
 ```
 
-Maybe need a way to say a rule applies to global not the scoped thing, for when scoped thing is result of weird query ( eg, you would only be able to further query on string result ) - might need to dfs to mirror nested array strucure.
+Maybe need a way to say a rule applies to global not the scoped thing, for when scoped thing is result of weird query ( eg, you would only be able to further query on vector result ) - might need to dfs to mirror nested array strucure - but only if leaves are objects.
 
 - if query result is a scalar and has mapping, ERROR - strict mode? options?
 - if query result is a scalar and NO mapping, assign

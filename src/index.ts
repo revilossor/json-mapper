@@ -2,11 +2,8 @@ console.log('hello world')
 /*
  map(templateFilePath: string, input:A): B
 */
-// load syntax file
-// parse AST / validate
-// for every rule
-//    run the query, or use root ( in array ) - not sure how arrays / single results handled
-//    if selector and value not obj, throw
-//    run the selector on the query result array
-//    delist the result of the selector?
-//    assign the key / throw if ite required but not there
+
+// - main interface, takes options
+// - processor takes AST from parser and input, produces output
+// - thing that inits parser, processor - takes mapping, input, returns output
+// - CLI getopts interface, constructs options

@@ -4,7 +4,8 @@ export interface ASTRule {
   key: string
   required?: boolean
   query?: string
-  // TODO tree
+  tree?: ASTRule[]
+  literal?: string
 }
 
 export interface AST {
