@@ -92,9 +92,7 @@ describe('Given a Processor for a syntax tree', () => {
     interface Output {
       some?: {
         nested?: {
-          value?: {
-            one: string
-          }
+          value?: number
         }
       }
     }
@@ -109,10 +107,7 @@ describe('Given a Processor for a syntax tree', () => {
             tree: [{
               key: 'value',
               required: false,
-              tree: [{
-                key: 'one',
-                required: false
-              }]
+              literal: 123 // TODO can the literals be numbers from the parser?
             }]
           }
         ]
@@ -123,7 +118,7 @@ describe('Given a Processor for a syntax tree', () => {
       const processor = new Processor<Input, Output>(tree)
       const input = { one: '1' }
       expect(processor.process(input)).toEqual({
-        some: { nested: { value: { one: input.one } } }
+        some: { nested: { value: 123 } }
       })
     })
   })

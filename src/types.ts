@@ -5,7 +5,7 @@ export interface ASTRule {
   required: boolean
   query?: string
   tree?: ASTRule[]
-  literal?: string
+  literal?: any
 }
 
 export interface AST {
