@@ -9,16 +9,18 @@ export class Processor<I extends json, O extends json> {
 
   private apply (input: I | any, {
     key,
-    tree
+    tree,
+    literal
     // required,
     // query,
-    // literal
   }: ASTRule): json {
     // console.dir({ input, key })
 
     let value
 
-    if (tree !== undefined) {
+    if (literal !== undefined) {
+      value = literal
+    } else if (tree !== undefined) {
       value = this.traverse(input, tree)
     } else {
       value = input[key]
