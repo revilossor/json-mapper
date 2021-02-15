@@ -30,9 +30,7 @@ name / version / description
 
 Maybe need a way to say a rule applies to global not the scoped thing, for when scoped thing is result of weird query ( eg, you would only be able to further query on vector result )
 
-use @ syntax from jsonpath?
-
-Might need to dfs to mirror nested array strucure - but only if leaves are objects.
+use @ syntax from jsonpath, default to global - replace first char in query?
 
 - if query result is a scalar and has mapping, ERROR - strict mode? options?
 - if query result is a scalar and NO mapping, assign
@@ -41,3 +39,7 @@ Might need to dfs to mirror nested array strucure - but only if leaves are objec
 - if query result is an array and has mapping, and map leaf is object scoped apply
 - if query result is an array and has mapping, and map leaf is scalar ERROR - strict mode? options?
 - if query result is an array and NO mapping, assign
+
+declare lists in syntax, eg for empty lists ( even if not required )
+
+pass in global object eg for setting date.now
