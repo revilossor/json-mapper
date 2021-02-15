@@ -21,4 +21,6 @@ export class JsonMapper<I, O> {
     const mapping = readFileSync(resolve(path)).toString()
     return new JsonMapper(mapping)
   }
+
+  // TODO from syntax
 }

@@ -11,12 +11,14 @@
   "main": "build/index",
   "typings": "build/index",
   "files": [
+    "build/**/*.pegjs",
     "build/**/*.js",
     "build/**/*.d.ts"
   ],
   "scripts": {
     "prebuild": "rm -rf build",
     "build": "tsc",
+    "postbuild": "cp src/parser/grammar.pegjs build/parser/grammar.pegjs",
     "dev": "node scripts/monmap",
     "postinstall": "husky install",
     "lint": "ts-standard --fix",

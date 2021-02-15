@@ -1,4 +1,5 @@
 import { JsonMapper } from '../../src/JsonMapper'
+// TODO integration test all features
 
 describe('Given a mapper for simple top level copies', () => {
   const mapper = JsonMapper.fromPath('./test/integration/fixtures/test-mapping-one.jsonmap')
