@@ -1,0 +1,4 @@
+required copy / version one / demonstrates the copying of parameters that must be satisfied by the input object
+{
+  one!
+}

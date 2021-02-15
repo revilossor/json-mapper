@@ -1,0 +1,6 @@
+copy / version one / demonstrates copying properties from the top level in the input object to the same key name at the top level in the output object
+{
+  one
+  two
+  three
+}

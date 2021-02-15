@@ -1,0 +1,8 @@
+nested copy / version one / demonstrates the copying of parameters from the top level in the input object to the same key name in a property of the output object
+{
+  one
+  nested {
+    two
+    three
+  }
+}
