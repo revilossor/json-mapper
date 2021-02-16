@@ -1,0 +1,9 @@
+required nested copy / version one / demonstrates throwing errors if nested required properties are missing in the input object
+{
+  nested! {
+    one
+  }
+  optionalNested {
+    two!
+  }
+}

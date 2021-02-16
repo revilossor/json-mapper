@@ -225,7 +225,7 @@ describe('Given a Processor for a syntax tree', () => {
     ]
 
     it('Then an error is thrown if the rule does not resolve a value', () => {
-      const error = new Error('expected "one" to resolve all required values')
+      const error = new Error('expected "one" to resolve a value')
       const processor = new Processor<Input, Output>(tree)
       expect(() => processor.process({ one: undefined })).toThrowError(error)
       expect(() => processor.process({ two: '2', three: '3' })).toThrowError(error)

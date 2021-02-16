@@ -29,17 +29,19 @@ export class Processor<I extends json, O extends json> {
     } else if (query !== undefined) {
       value = jp.value(input, query)
     } else if (tree !== undefined) {
-      value = this.traverse(input, tree, false)
+      value = this.traverse(input, tree, false) // TODO will this only throw for top level?
       if (Object.keys(value).length === 0) {
+        if (strict && required) {
+          throw new Error(`expected "${key}" to resolve a value`)
+        }
         return {}
       }
     } else {
       value = input[key]
     }
-
     if (!this.hasAllRequired(value, tree)) {
       if (strict && required) {
-        throw new Error(`expected "${key}" to resolve all required values`)
+        throw new Error(`expected "${key}" to resolve a value`)
       } else {
         return {}
       }

@@ -63,7 +63,7 @@ describe('Given a mapper with required copies', () => {
       two: 'the number two',
       three: 'the number three'
     }
-    expect(() => mapper.map(input)).toThrowError('expected "one" to resolve all required values')
+    expect(() => mapper.map(input)).toThrowError('expected "one" to resolve a value')
   })
 })
 
@@ -85,7 +85,7 @@ describe('Given a mapper with nested copies', () => {
     })
   })
 
-  it('Then missing nested optional paramaters are not added to the output', () => {
+  it('Then missing nested optional properties are not added to the output', () => {
     const input = {
       one: 'the number one',
       three: 'the number three'
@@ -98,7 +98,7 @@ describe('Given a mapper with nested copies', () => {
     })
   })
 
-  it('Then if all parameters for a nested object are missing and they are all optional, nothing is assigned', () => {
+  it('Then if all properties for a nested object are missing and they are all optional, nothing is assigned', () => {
     const input = {
       one: 'the number one'
     }
@@ -107,4 +107,25 @@ describe('Given a mapper with nested copies', () => {
     })
   })
 })
-// TODO required nested copies, in required properties
+
+describe('Given a mapper with required nested copies', () => {
+  const mapper = JsonMapper.fromPath('./test/integration/fixtures/required-nested-copy.jsonmap')
+
+  it('Then missing nested properties in a required property cause an error to be thrown', () => {
+    const input = {
+      two: 'not a one'
+    }
+    expect(() => mapper.map(input)).toThrowError('expected "nested" to resolve a value')
+  })
+
+  it('Then if there are missing required nested properties in an optional property, then the property is not added to the output', () => {
+    const input = {
+      one: 'its a one'
+    }
+    expect(mapper.map(input)).toEqual({
+      nested: {
+        one: input.one
+      }
+    })
+  })
+})
