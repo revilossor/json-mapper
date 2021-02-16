@@ -281,7 +281,7 @@ describe('Given a Processor for a syntax tree', () => {
       expect(processor.process({ two: 'two' })).toEqual({})
     })
   })
-  describe('When a nested rule is required but and the parent is also required', () => {
+  describe('When a nested rule is required and the parent is also required', () => {
     interface Output {
       nested: {
         one: string
@@ -313,6 +313,69 @@ describe('Given a Processor for a syntax tree', () => {
     it('When a required property is missing, an error is thrown', () => {
       const processor = new Processor<Input, Output>(tree)
       expect(() => processor.process({ two: 'two' })).toThrowError('expected "nested" to resolve a value')
+    })
+  })
+  describe('When a deeply nested rule is required and all ancestors are required', () => {
+    interface Output {
+      deeply: {
+        nested: {
+          one: string
+          two?: string
+        }
+      }
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'deeply',
+        required: true,
+        tree: [{
+          key: 'nested',
+          required: true,
+          tree: [{
+            key: 'one',
+            required: true
+          }, {
+            key: 'two',
+            required: false
+          }]
+        }]
+      }
+    ]
+
+    it('When a required property is missing, an error is thrown', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(() => processor.process({ two: 'two' })).toThrowError('expected "deeply" to resolve all required')
+    })
+  })
+  describe('When a deeply nested rule is required and its parent is too, but an ancestor is not', () => {
+    interface Output {
+      deeply: {
+        nested?: {
+          one: string
+          two?: string
+        }
+      }
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'deeply',
+        required: false,
+        tree: [{
+          key: 'nested',
+          required: true,
+          tree: [{
+            key: 'one',
+            required: true
+          }, {
+            key: 'two',
+            required: false
+          }]
+        }]
+      }
+    ]
+    it('When a required property is missing, no error is thrown and the ancestor is not assigned', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ two: 'two' })).toEqual({})
     })
   })
 

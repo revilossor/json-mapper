@@ -115,7 +115,7 @@ describe('Given a mapper with required nested copies', () => {
     const input = {
       two: 'not a one'
     }
-    expect(() => mapper.map(input)).toThrowError('expected "nested" to resolve all required values')
+    expect(() => mapper.map(input)).toThrowError('expected "nested" to resolve all required child values')
   })
 
   it('Then if there are missing required nested properties in an optional property, then the property is not added to the output', () => {
