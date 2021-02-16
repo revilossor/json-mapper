@@ -30,6 +30,9 @@ export class Processor<I extends json, O extends json> {
       value = jp.value(input, query)
     } else if (tree !== undefined) {
       value = this.traverse(input, tree, false)
+      if (Object.keys(value).length === 0) {
+        return {}
+      }
     } else {
       value = input[key]
     }
@@ -40,11 +43,6 @@ export class Processor<I extends json, O extends json> {
       } else {
         return {}
       }
-    }
-
-    // TODO this func needs a refactor - move out to handlers?
-    if (tree !== undefined && literal === undefined && Object.keys(value).length === 0) {
-      return {}
     }
 
     return {

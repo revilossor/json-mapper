@@ -98,7 +98,6 @@ describe('Given a mapper with nested copies', () => {
     })
   })
 
-  // TODO fixme
   it('Then if all parameters for a nested object are missing and they are all optional, nothing is assigned', () => {
     const input = {
       one: 'the number one'

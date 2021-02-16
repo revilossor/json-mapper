@@ -82,7 +82,7 @@ describe('Given a Processor for a syntax tree', () => {
     it('When all optional nested properties are missing, nothing is assigned', () => {
       const processor = new Processor<Input, Output>(tree)
       const input = {
-        one: '1', two: '2'
+        one: '1'
       }
       expect(processor.process(input)).toEqual({
         one: input.one
