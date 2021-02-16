@@ -65,6 +65,29 @@ describe('Given a Processor for a syntax tree', () => {
         }
       })
     })
+
+    it('When some optional nested properties are missing, only those present are assigned', () => {
+      const processor = new Processor<Input, Output>(tree)
+      const input = {
+        one: '1', two: '2', three: 'the number three'
+      }
+      expect(processor.process(input)).toEqual({
+        one: input.one,
+        additional: {
+          three: input.three
+        }
+      })
+    })
+
+    it('When all optional nested properties are missing, nothing is assigned', () => {
+      const processor = new Processor<Input, Output>(tree)
+      const input = {
+        one: '1', two: '2'
+      }
+      expect(processor.process(input)).toEqual({
+        one: input.one
+      })
+    })
   })
   describe('When the mapping copies a literal value to the top level', () => {
     interface Output {

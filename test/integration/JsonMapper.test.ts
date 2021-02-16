@@ -84,6 +84,28 @@ describe('Given a mapper with nested copies', () => {
       }
     })
   })
-})
 
+  it('Then missing nested optional paramaters are not added to the output', () => {
+    const input = {
+      one: 'the number one',
+      three: 'the number three'
+    }
+    expect(mapper.map(input)).toEqual({
+      one: input.one,
+      nested: {
+        three: input.three
+      }
+    })
+  })
+
+  // TODO fixme
+  it('Then if all parameters for a nested object are missing and they are all optional, nothing is assigned', () => {
+    const input = {
+      one: 'the number one'
+    }
+    expect(mapper.map(input)).toEqual({
+      one: input.one
+    })
+  })
+})
 // TODO required nested copies, in required properties

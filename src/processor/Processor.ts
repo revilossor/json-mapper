@@ -42,6 +42,11 @@ export class Processor<I extends json, O extends json> {
       }
     }
 
+    // TODO this func needs a refactor - move out to handlers?
+    if (tree !== undefined && literal === undefined && Object.keys(value).length === 0) {
+      return {}
+    }
+
     return {
       [key]: value
     }
