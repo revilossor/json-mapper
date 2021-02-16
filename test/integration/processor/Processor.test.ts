@@ -247,7 +247,7 @@ describe('Given a Processor for a syntax tree', () => {
       expect(processor.process({ one: undefined })).toEqual({})
     })
   })
-  describe('When a nesting rule is required', () => {
+  describe('When a nested rule is required but the parent is not', () => {
     interface Output {
       nested?: {
         one: string
@@ -268,6 +268,40 @@ describe('Given a Processor for a syntax tree', () => {
       }
     ]
 
+    it('And all required properties are present, the resolved subtree is assigned', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ one: 'one' })).toEqual({
+        nested: {
+          one: 'one'
+        }
+      })
+    })
+    it('And a required property is missing, nothing is assigned but no error is thrown', () => {
+      const processor = new Processor<Input, Output>(tree)
+      expect(processor.process({ two: 'two' })).toEqual({})
+    })
+  })
+  describe('When a nested rule is required but and the parent is also required', () => {
+    interface Output {
+      nested: {
+        one: string
+        two?: string
+      }
+    }
+    const tree: ASTRule[] = [
+      {
+        key: 'nested',
+        required: true,
+        tree: [{
+          key: 'one',
+          required: true
+        }, {
+          key: 'two',
+          required: false
+        }]
+      }
+    ]
+
     it('When all required properties are present, the resolved subtree is assigned', () => {
       const processor = new Processor<Input, Output>(tree)
       expect(processor.process({ one: 'one' })).toEqual({
@@ -276,9 +310,9 @@ describe('Given a Processor for a syntax tree', () => {
         }
       })
     })
-    it('If a required property is missing, nothing is assigned but no error is thrown', () => {
+    it('When a required property is missing, an error is thrown', () => {
       const processor = new Processor<Input, Output>(tree)
-      expect(processor.process({ two: 'two' })).toEqual({})
+      expect(() => processor.process({ two: 'two' })).toThrowError('expected "nested" to resolve a value')
     })
   })
 

@@ -32,13 +32,14 @@ export class Processor<I extends json, O extends json> {
       value = this.traverse(input, tree, false) // TODO will this only throw for top level?
       if (Object.keys(value).length === 0) {
         if (strict && required) {
-          throw new Error(`expected "${key}" to resolve a value`)
+          throw new Error(`expected "${key}" to resolve all required values`)
         }
         return {}
       }
     } else {
       value = input[key]
     }
+
     if (!this.hasAllRequired(value, tree)) {
       if (strict && required) {
         throw new Error(`expected "${key}" to resolve a value`)
