@@ -130,7 +130,7 @@ describe('Given a Processor for a syntax tree', () => {
             tree: [{
               key: 'value',
               required: false,
-              literal: 123 // TODO can the literals be numbers from the parser?
+              literal: 123
             }]
           }
         ]
@@ -163,7 +163,7 @@ describe('Given a Processor for a syntax tree', () => {
           result: input.one
         })
       })
-    }) // TODO unit test query rule calls jp side effect
+    })
     describe('And the query has bad syntax', () => {
       interface Output {
         result?: string
@@ -180,7 +180,7 @@ describe('Given a Processor for a syntax tree', () => {
         expect(() => processor.process(input)).toThrowError('syntax error')
       })
     })
-    // TODO no results, multiple results, what if the type is an array? required
+    // TODO required flag for unmapped queries
   })
   describe('When a mapping rule has a literal and a tree', () => {
     interface Output {
