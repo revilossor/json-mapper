@@ -1,0 +1,6 @@
+literal / version one / demonstrates adding literal values to the output object
+{
+  one
+  two / "two"
+  pi / "3.14"
+}

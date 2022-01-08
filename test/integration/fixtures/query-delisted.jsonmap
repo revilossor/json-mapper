@@ -1,0 +1,9 @@
+query / version one / demonstrates querying for scalar properties using jsonpath syntax and the delist operator ( ^ )
+{
+  all / ^ $
+  queries {
+    first / ^$.one
+    second / ^$.nested.two
+    third / ^$..three
+  }
+}

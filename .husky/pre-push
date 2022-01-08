@@ -1,2 +1,4 @@
+set -e
+
 npx ts-standard --fix
 npm test

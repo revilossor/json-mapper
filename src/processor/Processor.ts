@@ -1,66 +1,105 @@
-import { ASTRule } from '../types'
+import { ASTRule, json, Scope } from '../types'
 import jp from 'jsonpath'
 
-interface json { [index: string]: any }
-
 export class Processor<I extends json, O extends json> {
-  // TODO validate the tree for required fields in output O...?
+  private input: json = {}
+  private global: json = {}
+
   public constructor (private readonly root: ASTRule[]) {}
 
-  private hasAllRequired (value: json, tree?: ASTRule[]): boolean {
-    return tree === undefined
-      ? value !== undefined
-      : tree.every(({ key, required }) => {
-        return !required || (required && value[key] !== undefined)
-      })
-  }
+  private apply (input: json, rule: ASTRule, path: string[], strict: boolean): json {
+    let value: any
 
-  private apply (input: json, {
-    key,
-    tree,
-    literal,
-    required,
-    query
-  }: ASTRule, strict: boolean): json {
-    let value
-
-    if (literal !== undefined) {
-      value = literal
-    } else if (query !== undefined) {
-      value = jp.value(input, query)
-    } else if (tree !== undefined) {
-      value = this.traverse(input, tree, false)
-      if (Object.keys(value).length === 0) {
-        if (strict && required) {
-          throw new Error(`expected "${key}" to resolve all required child values`)
-        }
-        return {}
-      }
+    if (rule.literal !== undefined) {
+      value = rule.literal
+    } else if (rule.query !== undefined) {
+      const scope = this.getScope(input, rule?.scope ?? 'root')
+      value = rule.delist === true
+        ? jp.value(scope, rule.query)
+        : jp.query(scope, rule.query)
+    } else if (rule.scope !== undefined) {
+      value = this.getScope(input, rule.scope)
     } else {
-      value = input[key]
+      value = input?.[rule.key] ??
+        this.input?.[rule.key] ??
+        this.global?.[rule.key] ??
+        undefined
     }
 
-    if (!this.hasAllRequired(value, tree)) {
-      if (strict && required) {
-        throw new Error(`expected "${key}" to resolve a value`)
+    if (rule.tree !== undefined) {
+      if (Array.isArray(value)) {
+        value = value.map(item => {
+          return this.traverse(
+            rule?.tree ?? [],
+            [...path, rule.key],
+            strict && rule.required,
+            item
+          )
+        })
       } else {
-        return {}
+        value = this.traverse(
+          rule?.tree ?? [],
+          [...path, rule.key],
+          strict && rule.required,
+          value
+        )
       }
     }
 
     return {
-      [key]: value
+      ...(value === undefined ? {} : { [rule.key]: value })
     }
   }
 
-  private traverse (input: json, tree: ASTRule[], strict = true): json {
-    return tree.reduce((output, rule) => ({
+  private traverse (tree: ASTRule[], path: string[], strict: boolean, input?: any): json | undefined {
+    const values: json = tree.reduce((output, rule) => ({
       ...output,
-      ...this.apply(input, rule, strict)
+      ...this.apply(input, rule, path, strict)
     }), {})
+
+    if (strict) {
+      Processor.validateRequiredResolved(tree, values, path)
+    } else if (Processor.hasMissingRequired(tree, values)) {
+      return undefined
+    }
+
+    return values
   }
 
-  public process (input: I): O {
-    return this.traverse(input, this.root) as unknown as O
+  public process (input: I, global: json = {}): O {
+    this.input = input
+    this.global = global
+    return this.traverse(this.root, ['$'], true, input) as O
+  }
+
+  private getScope (local: json, scope: Scope): json {
+    switch (scope) {
+      case 'global':
+        return this.global
+      case 'root':
+        return this.input
+      case 'this':
+        return local
+      default:
+        return this.input
+    }
+  }
+
+  private static validateRequiredResolved (tree: ASTRule[], values: json, path: string[]): true {
+    const missing = tree.reduce((accumulated: string[], rule: ASTRule) => {
+      return rule.required && values[rule.key] === undefined
+        ? [...accumulated, rule.key]
+        : accumulated
+    }, [])
+    if (missing.length > 0) {
+      const basepath = path.join('.')
+      const paths = missing.map(key => `${basepath}.${key}`)
+      throw new Error(`expected "${paths.join(', ')}" to resolve a value`)
+    }
+    return true
+  }
+
+  private static hasMissingRequired (tree: ASTRule[], values: json): boolean {
+    return tree.some(({ key, required }) => required && values[key] === undefined)
   }
 }

@@ -1,0 +1,17 @@
+scope / version one / demonstrates scoped rules
+{
+  thisValue / .
+  globalValue / ..
+  data / ^$.data
+  scoped / ^$.data {
+    thisValue / .
+    globalValue / ..
+    fromRoot / ^$.key
+    fromThis / ^.$.key
+    fromGlobal / ^..$.key
+    doublescoped / ^$.data.moredata {
+      thisValue / .
+      fromThis / .$.key
+    }
+  }
+}

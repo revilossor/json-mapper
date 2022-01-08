@@ -1,9 +1,9 @@
-required nested copy / version one / demonstrates throwing errors if nested required properties are missing in the input object
+required nested copy / version one / demonstrates nested required properties
 {
   nested! {
     one
   }
-  optionalNested {
+  anotherNested! {
     two!
   }
 }

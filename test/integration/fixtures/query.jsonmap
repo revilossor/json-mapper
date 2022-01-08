@@ -1,0 +1,20 @@
+query / version one / demonstrates querying using jsonpath syntax
+{
+  all / $
+  queries {
+    The-authors-of-all-books–in-the-store / $.store.book[*].author
+    All-authors / $..author
+    All-things-in–store-which-are-some-books-and-a-red-bicycle / $.store.*
+    The-price-of-everything-in-the-store / $.store..price
+    The-third-book / $..book[2]
+    The-last-book-via-script-subscript / $..book[(@.length-1)]
+    The-last-book-via-slice / $..book[-1:]
+    The-first-two-books-via-subscript-union / $..book[0,1]
+    The-first-two-books-via-subscript-array-slice / $..book[:2]
+    Filter-all-books-with-isbn-number / $..book[?(@.isbn)]
+    Filter-all-books-cheaper-than-10 / $..book[?(@.price<10)]
+    Filter-all-books-that-cost-8.95 / $..book[?(@.price==8.95)]
+    Filter-all-fiction-books-cheaper-than-30 / $..book[?(@.price<30 && @.category=="fiction")]
+    All-members-of-JSON-structure / $..*
+  }
+}

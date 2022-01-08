@@ -22,7 +22,7 @@
     "dev": "node scripts/monmap",
     "postinstall": "husky install",
     "lint": "ts-standard --fix",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "lint-staged": {
     "*.{ts,js,tsx,jsx}": "ts-standard --fix",

@@ -21,7 +21,7 @@ generate.mockImplementation(() => ({ parse }))
 describe('When I initialise a parser', () => {
   let parser: Parser
 
-  beforeAll(() => {
+  beforeEach(() => {
     parser = new Parser()
   })
 

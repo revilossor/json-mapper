@@ -104,7 +104,9 @@ describe('When I parse a mapping with a rule', () => {
           tree: [{
             key: 'mappedKeyName',
             query,
-            required: false
+            delist: false,
+            required: false,
+            scope: 'root'
           }]
         })
       })
@@ -147,7 +149,9 @@ describe('When I parse a mapping with a rule', () => {
           {
             key: 'anotherKeyname',
             query: 'somequery',
-            required: false
+            required: false,
+            delist: false,
+            scope: 'root'
           },
           {
             key: 'third',
@@ -190,12 +194,102 @@ describe('When I parse a mapping with nested rules', () => {
               tree: [{
                 key: 'key',
                 required: false,
-                query: 'query'
+                query: 'query',
+                delist: false,
+                scope: 'root'
               }]
             }
           ]
         }
       ]
+    })
+  })
+})
+
+describe('When I parse a mapping with a delisted query property', () => {
+  it('Then the returned tree contains the correct key, query and delist flag', () => {
+    expect(parser.parse(`{
+      somekey / ^$..book
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        query: '$..book',
+        required: false,
+        delist: true,
+        scope: 'root'
+      }]
+    })
+  })
+})
+
+describe('When I parse a mapping with a scoped query property', () => {
+  it('Then the returned tree contains the correct scope', () => {
+    expect(parser.parse(`{
+      somekey / .$..book
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        query: '$..book',
+        required: false,
+        delist: false,
+        scope: 'this'
+      }]
+    })
+    expect(parser.parse(`{
+      somekey / ..$..book
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        query: '$..book',
+        required: false,
+        delist: false,
+        scope: 'global'
+      }]
+    })
+    expect(parser.parse(`{
+      somekey / ^ .$..book
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        query: '$..book',
+        required: false,
+        delist: true,
+        scope: 'this'
+      }]
+    })
+    expect(parser.parse(`{
+      somekey / ^ ..$..book
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        query: '$..book',
+        required: false,
+        delist: true,
+        scope: 'global'
+      }]
+    })
+  })
+})
+
+describe('When I parse a mapping with a scope', () => {
+  it('Then the returned tree contains the correct scope', () => {
+    expect(parser.parse(`{
+      somekey / .
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        required: false,
+        scope: 'this'
+      }]
+    })
+    expect(parser.parse(`{
+      somekey / ..
+    }`)).toEqual({
+      tree: [{
+        key: 'somekey',
+        required: false,
+        scope: 'global'
+      }]
     })
   })
 })
@@ -219,8 +313,8 @@ describe('When I parse a mapping with required keys', () => {
           key: 'renditions',
           required: true,
           tree: [
-            { key: 'name', query: 'query', required: true },
-            { key: 'age', query: 'query', required: true },
+            { key: 'name', query: 'query', required: true, delist: false, scope: 'root' },
+            { key: 'age', query: 'query', required: true, delist: false, scope: 'root' },
             { key: 'something', literal: 'literal', required: true }
           ]
         }
@@ -254,10 +348,16 @@ describe('When I parse a mapping that is invalid, I get an error', () => {
     expect(() => parser.parse('{{}}')).toThrow()
     expect(() => parser.parse('{noquery{{}}}')).toThrow()
   })
-  it('When there is a literal mapping with a mapping', () => {
-    expect(() => parser.parse('{key/"literal"{}}')).toThrow()
-    expect(() => parser.parse('{key{nested/"literal"{}}')).toThrow()
+  it('When there is a scope mapping with a mapping', () => {
+    expect(() => parser.parse('{key/.{}}')).toThrow()
+    expect(() => parser.parse('{key/..{}}')).toThrow()
+    expect(() => parser.parse('{key{nested/.{}}')).toThrow()
+    expect(() => parser.parse('{key{nested/..{}}')).toThrow()
+  })
+  it('When there is a scope mapping with a delist operator', () => {
+    expect(() => parser.parse('{key/^.}')).toThrow()
+    expect(() => parser.parse('{key/^..}')).toThrow()
+    expect(() => parser.parse('{key{nested/^.}')).toThrow()
+    expect(() => parser.parse('{key{nested/^..}')).toThrow()
   })
 })
-
-// TODO root flag on mapping rules, applies query from root ---> ~<rule>

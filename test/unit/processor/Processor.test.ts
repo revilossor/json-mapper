@@ -1,33 +1,76 @@
 import { Processor } from '../../../src/processor'
 import { ASTRule } from '../../../src/types'
-import { value } from 'jsonpath'
+import { query, value } from 'jsonpath'
 
 jest.mock('jsonpath')
 
-describe('Given a Processor for a syntax tree that contains a top level query', () => {
+const mockQuery = query as jest.Mock
+
+describe('Given a Processor for a syntax tree', () => {
   interface Input { key: string }
   interface Output { key: string }
 
-  const query = 'some query'
+  const mappingQuery = 'some query'
 
-  const tree: ASTRule[] = [{ key: 'some key', required: false, query }]
-
-  let processor: Processor<Input, Output>
-
-  beforeAll(() => {
-    processor = new Processor<Input, Output>(tree)
-  })
-
-  describe('When I process an input', () => {
-    it('Then the query is made againnst the input', () => {
-      const input = { key: 'the moon' }
-      processor.process(input)
-      expect(value).toHaveBeenCalledWith(
-        input,
-        query
-      )
+  describe('When the tree contains a query', () => {
+    describe('And there is no delisting', () => {
+      // TODO other scopes
+      it('When I process an input, then a jsonpath query is made against the input', () => {
+        const tree: ASTRule[] = [{ key: 'some key', required: false, delist: false, query: mappingQuery, scope: 'root' }]
+        const processor = new Processor<Input, Output>(tree)
+        const input = { key: 'the moon' }
+        processor.process(input)
+        expect(query).toHaveBeenCalledWith(
+          input,
+          mappingQuery
+        )
+      })
+    })
+    describe('And the query is delisted', () => {
+      it('When I process an input, then a jsonpath value is made against the input', () => {
+        const tree: ASTRule[] = [{ key: 'some key', required: false, delist: true, query: mappingQuery, scope: 'root' }]
+        const processor = new Processor<Input, Output>(tree)
+        const input = { key: 'the moon' }
+        processor.process(input)
+        expect(value).toHaveBeenCalledWith(
+          input,
+          mappingQuery
+        )
+      })
+    })
+    describe('And a nested query is scoped to a parent query result', () => {
+      it('Then the parent query is made against the input, and the nested query against the result', () => {
+        const result = { some: 'query result' }
+        mockQuery.mockReturnValueOnce(result)
+        const nestedQuery = 'nestedQuery'
+        const tree: ASTRule[] = [
+          {
+            key: 'some key',
+            required: false,
+            delist: false,
+            query: mappingQuery,
+            scope: 'root',
+            tree: [{
+              key: 'some nested key',
+              required: false,
+              delist: false,
+              query: nestedQuery,
+              scope: 'this'
+            }]
+          }
+        ]
+        const processor = new Processor<Input, Output>(tree)
+        const input = { key: 'the moon' }
+        processor.process(input)
+        expect(query).toHaveBeenCalledWith(
+          input,
+          mappingQuery
+        )
+        expect(query).toHaveBeenCalledWith(
+          result,
+          nestedQuery
+        )
+      })
     })
   })
 })
-
-// TODO can have query rules on mappings..
